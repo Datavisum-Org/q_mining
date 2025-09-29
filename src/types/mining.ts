@@ -1,17 +1,24 @@
 export interface MiningParameters {
   hashRate: number; // EH/s
   powerConsumption: number; // MW
-  electricityRate: number; // USD/kWh
+  electricityRate: number; // USD per kWh
   hardwareCost: number; // USD
-  setupCost?: number; // USD
-  maintenanceCost?: number; // USD/month
+  setupCost: number; // USD
+  maintenanceCost: number; // USD per month
 }
 
-export interface CostBreakdown {
-  electricityPerDay: number;
-  electricityPerMonth: number;
-  maintenancePerMonth: number;
-  totalOperatingPerMonth: number;
+export interface MarketConditions {
+  btcPriceUSD: number;
+  networkHashRateEHS: number;
+  difficulty: number;
+  blockReward: number; // BTC
+}
+
+export interface CalculationAssumptions {
+  networkGrowthMonthly: number;
+  discountRateAnnual: number;
+  depreciationMonths: number;
+  projectionMonths: number;
 }
 
 export interface RevenueBreakdown {
@@ -20,6 +27,14 @@ export interface RevenueBreakdown {
   usdPerMonth: number;
   usdPerYear: number;
   projectedMonthly: number[];
+}
+
+export interface CostBreakdown {
+  electricityPerDay: number;
+  electricityPerMonth: number;
+  maintenancePerMonth: number;
+  depreciationPerMonth: number;
+  totalOperatingPerMonth: number;
 }
 
 export interface ProfitabilityMetrics {
@@ -34,15 +49,20 @@ export interface InvestmentMetrics {
   totalInitialInvestment: number;
   monthlyROI: number;
   annualROI: number;
-  paybackPeriodMonths: number;
+  paybackPeriodMonths: number | null;
   npv12Months: number;
 }
 
-export interface CalculationResults {
-  revenue: RevenueBreakdown;
-  costs: CostBreakdown;
-  profitability: ProfitabilityMetrics;
-  investment: InvestmentMetrics;
+export interface ProjectionSummary {
+  monthly: number[];
+  cumulative: number[];
+}
+
+export interface ScenarioComparisonResult {
+  scenario: string;
+  netProfitPerMonth: number;
+  paybackPeriodMonths: number | null;
+  annualROI: number;
 }
 
 export interface ScenarioVariation {
@@ -52,9 +72,11 @@ export interface ScenarioVariation {
   electricityRateMultiplier: number;
 }
 
-export interface ScenarioComparisonResult {
-  scenario: string;
-  netProfitPerMonth: number;
-  paybackPeriodMonths: number;
-  annualROI: number;
+export interface CalculationResults {
+  assumptions: CalculationAssumptions;
+  revenue: RevenueBreakdown;
+  costs: CostBreakdown;
+  profitability: ProfitabilityMetrics;
+  investment: InvestmentMetrics;
+  projection: ProjectionSummary;
 }

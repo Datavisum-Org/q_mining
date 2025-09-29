@@ -4,11 +4,6 @@ export interface MarketSnapshot {
   difficulty: number;
   blockReward: number;
   lastUpdated: string;
-  priceSource?: string;
-  hashRateSource?: string;
-}
-
-export interface MarketDataResponse {
-  data: MarketSnapshot;
-  cachedAt: string;
+  priceSource: string;
+  hashRateSource: string;
 }

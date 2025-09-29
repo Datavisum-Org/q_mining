@@ -31,7 +31,11 @@ export function ScenarioComparison({ data }: ScenarioComparisonProps) {
               <tr key={scenario.scenario} className="hover:bg-coal-800/40">
                 <td className="py-3 pr-6 font-medium">{scenario.scenario}</td>
                 <td className="py-3 pr-6">{usd(scenario.netProfitPerMonth)}</td>
-                <td className="py-3 pr-6">{scenario.paybackPeriodMonths.toFixed(1)}</td>
+                <td className="py-3 pr-6">
+                  {typeof scenario.paybackPeriodMonths === "number"
+                    ? scenario.paybackPeriodMonths.toFixed(1)
+                    : "—"}
+                </td>
                 <td className="py-3">{(scenario.annualROI * 100).toFixed(1)}%</td>
               </tr>
             ))}

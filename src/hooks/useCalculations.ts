@@ -11,27 +11,40 @@ interface UseCalculationsArgs {
 export function useCalculations({ parameters, marketData }: UseCalculationsArgs) {
   const key = parameters ? ["calculations", parameters, marketData] : null;
 
-  const swr = useSWR<CalculationResponseBody>(key, async () => {
-    if (!parameters) {
-      throw new Error("Missing mining parameters");
-    }
+  const swr = useSWR<CalculationResponseBody>(
+    key,
+    async () => {
+      if (!parameters) {
+        throw new Error("Missing mining parameters");
+      }
 
-    const payload: CalculationRequestBody = marketData
-      ? { parameters, marketData }
-      : { parameters };
+      const payload: CalculationRequestBody = marketData
+        ? { parameters, marketData }
+        : { parameters };
 
-    const response = await fetch("/api/calculations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      const response = await fetch("/api/calculations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to compute profitability");
-    }
+      if (!response.ok) {
+        const payloadText = await response.text();
+        throw new Error(`Failed to compute profitability (${response.status}): ${payloadText}`);
+      }
 
-    return response.json();
-  });
+      const body: CalculationResponseBody = await response.json();
+      if (!body.success) {
+        throw new Error("Calculation service responded with an error");
+      }
+
+      return body;
+    },
+    {
+      dedupingInterval: 30_000,
+      revalidateOnFocus: false,
+    },
+  );
 
   return {
     results: swr.data,

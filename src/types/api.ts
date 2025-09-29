@@ -12,13 +12,26 @@ export interface CalculationRequestBody {
 }
 
 export interface CalculationResponseBody {
-  success: boolean;
+  success: true;
   data: CalculationResults;
   metadata: {
     calculatedAt: string;
     marketDataAge: string;
+    cacheKey?: string;
+    cached?: boolean;
+    ttlSeconds: number;
   };
+  rateLimit?: RateLimitMeta;
 }
+
+export interface CalculationErrorResponse {
+  success: false;
+  error: string;
+  details?: unknown;
+  rateLimit?: RateLimitMeta;
+}
+
+export type CalculationApiResponse = CalculationResponseBody | CalculationErrorResponse;
 
 export interface ScenarioComparisonRequest {
   base: MiningParameters;
@@ -43,4 +56,30 @@ export interface OperationRecord extends MiningParameters {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface MarketDataSuccessResponse {
+  success: true;
+  data: MarketSnapshot;
+  metadata: {
+    cachedAt: string;
+    ttlSeconds: number;
+    sourcePriority: string;
+  };
+  rateLimit?: RateLimitMeta;
+}
+
+export interface MarketDataErrorResponse {
+  success: false;
+  error: string;
+  details?: unknown;
+  rateLimit?: RateLimitMeta;
+}
+
+export type MarketDataResponse = MarketDataSuccessResponse | MarketDataErrorResponse;
+
+export interface RateLimitMeta {
+  limit: number;
+  remaining: number;
+  resetAt: string;
 }
